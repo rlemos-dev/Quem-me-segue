@@ -6,6 +6,9 @@ from getpass import getpass
 
 # Configurar opções do Chrome
 chrome_options = Options()
+
+chrome_options.add_argument("--log-level=3")
+chrome_options.add_experimental_option("excludeSwitches", ["enable-logging"])
 chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36")
 
 # Iniciar o Chrome com as opções configuradas
@@ -13,39 +16,37 @@ driver = webdriver.Chrome(options=chrome_options)
 
 driver.get('https://www.instagram.com')
 
-time.sleep(10)
+time.sleep(5)
 
 username= input('digite seu nome de usuário: ')
-login = driver.find_element(By.XPATH, '//input[@name="username"]')
+login = driver.find_element(By.NAME, "email")
 login.send_keys(username)
 
-time.sleep(10)
+time.sleep(5)
 
-senha= driver.find_element(By.XPATH, '//input[@name="password"]')
+senha= driver.find_element(By.NAME, "pass")
 senha.send_keys(getpass('digite a senha do seu perfil: '))
 
-time.sleep(10)
+time.sleep(5)
 
-botao = driver.find_element(By.XPATH, '//button[@class=" _aswp _aswr _aswu _asw_ _asx2"]')
+botao = driver.find_element(By.XPATH, '//span[text()="Entrar"]/ancestor::*[@role="button"]')
 botao.click()
 
-time.sleep(30)
+time.sleep(10)
 
 driver.get(f'https://www.instagram.com/{username}')
 
-time.sleep(15)
+time.sleep(10)
 
 lista_seguidores= []
 seguidores= driver.find_element(By.XPATH, '//a[contains(@href, "/followers/")]')
 seguidores.click()
 
-time.sleep(100)
+time.sleep(30)
 
-barra= driver.find_element(By.XPATH, "//div[@role='dialog']//div[contains(@class,'x6nl9eh x1a5l9x9 x7vuprf x1mg3h75 x1lliihq x1iyjqo2 xs83m0k xz65tgg x1rife3k x1n2onr6')]")
+barra= driver.find_element(By.XPATH, '//div[@role="dialog"]')
 
 # Rola até o final
-import time
-
 last_count = 0
 same_count_times = 0
 

@@ -1,4 +1,4 @@
-# 📊 Quem-me-segue
+# 📊 rastreador_de_seguidores
 
 Script em Python que automatiza o processo de análise do Instagram para identificar quais usuários você segue, mas que não te seguem de volta.
 
@@ -17,7 +17,7 @@ Com base nesses dados, o script identifica automaticamente quem **não te segue 
 
 ## 🔗 Repositório
 
-https://github.com/rlemos-dev/Quem-me-segue.git
+https://github.com/rlemos-dev/rastreador_de_seguidores.git
 
 ---
 
@@ -44,8 +44,8 @@ https://github.com/rlemos-dev/Quem-me-segue.git
 
 Clone o repositório:
 
-git clone https://github.com/rlemos-dev/Quem-me-segue.git  
-cd Quem-me-segue  
+git clone https://github.com/rlemos-dev/rastreador_de_seguidores.git  
+cd rastreador_de_seguidores 
 
 Instale as dependências:
 
