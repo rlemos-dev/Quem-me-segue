@@ -1,12 +1,13 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-import time
 from selenium.webdriver.chrome.options import Options
+from instagram_utils import acesso_url
+import time
 from getpass import getpass
+
 
 # Configurar opções do Chrome
 chrome_options = Options()
-
 chrome_options.add_argument("--log-level=3")
 chrome_options.add_experimental_option("excludeSwitches", ["enable-logging"])
 chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36")
@@ -14,7 +15,7 @@ chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64
 # Iniciar o Chrome com as opções configuradas
 driver = webdriver.Chrome(options=chrome_options)
 
-driver.get('https://www.instagram.com')
+acesso_url(driver)
 
 time.sleep(5)
 
@@ -32,27 +33,28 @@ time.sleep(5)
 botao = driver.find_element(By.XPATH, '//span[text()="Entrar"]/ancestor::*[@role="button"]')
 botao.click()
 
-time.sleep(10)
+time.sleep(5)
 
-driver.get(f'https://www.instagram.com/{username}')
+acesso_url(driver, username)
 
-time.sleep(10)
+time.sleep(5)
 
 lista_seguidores= []
 seguidores= driver.find_element(By.XPATH, '//a[contains(@href, "/followers/")]')
 seguidores.click()
 
-time.sleep(30)
+time.sleep(5)
 
-barra= driver.find_element(By.XPATH, '//div[@role="dialog"]')
+barra = driver.find_element(By.XPATH, "//div[@role='dialog']//div[contains(@class,'x6nl9eh x1a5l9x9 x7vuprf x1mg3h75 x1lliihq " \
+"x1iyjqo2 xs83m0k xz65tgg x1rife3k x1n2onr6')]")
 
 # Rola até o final
 last_count = 0
 same_count_times = 0
 
 while True:
-    driver.execute_script('arguments[0].scrollTop = arguments[0].scrollHeight', barra)
-    time.sleep(2)
+    driver.execute_script('arguments[0].scrollTop += 300', barra)
+    time.sleep(1.5)
 
     users = barra.find_elements(By.XPATH, './/a[contains(@href, "/")]')
     current_count = len(users)
@@ -60,7 +62,7 @@ while True:
     # Se o número de usuários não aumenta por várias iterações, terminou
     if current_count == last_count:
         same_count_times += 1
-        if same_count_times >= 3:  # tentou 3x e não mudou
+        if same_count_times >= 5:  # tentou 3x e não mudou
             break
     else:
         same_count_times = 0  # resetar o contador se aumentou
@@ -70,21 +72,23 @@ while True:
 # Coletar nomes dos usuários
 users = barra.find_elements(By.XPATH, './/a[contains(@href, "/")]')
 for u in users:
-    nome= u.text.strip()
+    href= u.get_attribute('href')
+    if href:
+        nome= href.split('/')[-2]
     if nome and nome not in lista_seguidores:
         lista_seguidores.append(nome)
 
 time.sleep(5)
 
-driver.get(f'https://www.instagram.com/[{username}]')
+acesso_url(driver, username)
 
-time.sleep(15)
+time.sleep(5)
 
 lista_seguindo= []
 seguindo= driver.find_element(By.XPATH, '//a[contains(@href, "/following/")]')
 seguindo.click()
 
-time.sleep(100)
+time.sleep(5)
 
 barra_seguindo= driver.find_element(By.XPATH, "//div[@role='dialog']//div[contains(@class,'x6nl9eh x1a5l9x9 x7vuprf x1mg3h75 x1lliihq x1iyjqo2 xs83m0k xz65tgg x1rife3k x1n2onr6')]")
 
@@ -93,8 +97,8 @@ last_count = 0
 same_count_times = 0
 
 while True:
-    driver.execute_script('arguments[0].scrollTop = arguments[0].scrollHeight', barra_seguindo)
-    time.sleep(2)
+    driver.execute_script('arguments[0].scrollTop += 300', barra_seguindo)
+    time.sleep(1.5)
 
     users = barra_seguindo.find_elements(By.XPATH, './/a[contains(@href, "/")]')
     current_count = len(users)
@@ -102,7 +106,7 @@ while True:
     # Se o número de usuários não aumenta por várias iterações, terminou
     if current_count == last_count:
         same_count_times += 1
-        if same_count_times >= 3:  # tentou 3x e não mudou
+        if same_count_times >= 5:  # tentou 3x e não mudou
             break
     else:
         same_count_times = 0  # resetar o contador se aumentou
@@ -113,7 +117,8 @@ while True:
 users = barra_seguindo.find_elements(By.XPATH, './/a[contains(@href, "/")]')
 for u in users:
     nome= u.text.strip()
-    lista_seguindo.append(nome)
+    if nome:
+        lista_seguindo.append(nome)
 
 driver.quit()
 
